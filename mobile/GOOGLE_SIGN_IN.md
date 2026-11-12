@@ -2,7 +2,7 @@
 
 ## Firebase web configuration
 
-The provided Firebase project united-super-store-e6131 is configured in src/lib/firebase.web.ts. Web sign-in uses Firebase Authentication's Google popup, extracts the Google credential, then exchanges Google's ID token for a Supabase session. A Firebase user token is not passed to Supabase as a Google token. Firebase's intermediate session is in memory and signed out after the exchange. Analytics is not initialised by this authentication integration.
+The provided Firebase project united-super-store-e6131 is configured through the public variables in `.env.example`. Its runtime integration is in src/lib/firebase.web.ts. Web sign-in uses Firebase Authentication's Google popup, extracts the Google credential, then exchanges Google's ID token for a Supabase session. A Firebase user token is not passed to Supabase as a Google token. Firebase's intermediate session is in memory and signed out after the exchange. Analytics is not initialised by this authentication integration.
 
 Public Firebase checks confirmed Google is enabled and localhost is authorised. Its Google OAuth web client ID is:
 
@@ -18,7 +18,7 @@ The customer login and signup screens include Continue with Google. Web uses the
 
 ## Provider setup required
 
-Google was disabled in the connected Supabase project's public auth settings when this feature was implemented. No Google client secret was provided or embedded in the app. Enable the provider before real Google accounts can sign in:
+Public Auth settings now confirm Google is enabled. No Google client secret is embedded in the app. For another installation, configure the provider as follows:
 
 1. In Google Cloud / Google Auth Platform, create or select the store project and configure its consent screen, audience and support contact. If the app is in testing, add the real testing accounts.
 2. Create an OAuth client of type Web application for this Supabase-hosted browser OAuth flow. Add the relevant website origins, including http://localhost:8081 during development.

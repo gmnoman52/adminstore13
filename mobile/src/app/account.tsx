@@ -1,4 +1,5 @@
 import { metadataFor } from '../components/page-metadata';
+import { validateNewPassword } from '../lib/password';
 import { useState } from 'react';
 import { ActivityIndicator, Image, Pressable, Text, View } from 'react-native';
 import { useAuth } from '../auth';
@@ -34,7 +35,8 @@ export default function Account() {
     try {
       const client = requireSupabase();
       if (!recovery && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) throw new Error('Enter a valid email address');
-      if ((recovery || mode !== 'reset') && password.length < 8) throw new Error('Use a password with at least 8 characters');
+      if (recovery || mode === 'signup') validateNewPassword(password);
+      if (!recovery && mode === 'login' && !password) throw new Error('Enter your password');
       if ((recovery || mode === 'signup') && password !== confirmation) throw new Error('Passwords do not match');
       if (mode === 'signup' && !name.trim()) throw new Error('Enter your name');
       setBusy(true);

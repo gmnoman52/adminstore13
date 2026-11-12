@@ -33,10 +33,19 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "build:web": "node ../scripts/check-env.mjs mobile && expo export --platform web --max-workers 2 && node ../scripts/check-build.mjs mobile",
+    "build:android": "node ../scripts/check-env.mjs mobile && expo export --platform android --output-dir dist-android --max-workers 2",
+    "preview:web": "node ../scripts/serve-built.mjs mobile",
+    "prestart": "node ../scripts/check-env.mjs mobile",
+    "preweb": "node ../scripts/check-env.mjs mobile",
+    "preandroid": "node ../scripts/check-env.mjs mobile",
+    "preios": "node ../scripts/check-env.mjs mobile"
   },
   "private": true,
   "overrides": {
-    "@grpc/grpc-js": "1.13.6"
+    "@grpc/grpc-js": "1.13.6",
+    "glob": "14.0.4",
+    "minimatch": "11.0.5"
   }
 }

@@ -8,9 +8,7 @@ export function completeAuthFromUrl(url: string): Promise<void> {
   const completion = (async () => {
     const callback = parseAuthCallback(url);
     const client = requireSupabase();
-    const result = callback.code
-      ? await client.auth.exchangeCodeForSession(callback.code)
-      : await client.auth.setSession({ access_token: callback.access_token!, refresh_token: callback.refresh_token! });
+    const result = await client.auth.exchangeCodeForSession(callback.code);
     if (result.error) throw result.error;
   })();
   callbacks.set(url, completion);

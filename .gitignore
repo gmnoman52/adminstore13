@@ -11,3 +11,9 @@ dist-android/
 mobile/.claude/
 mobile/android/
 mobile/ios/
+supabase/.temp/
+*.pem
+*.key
+*.p12
+*.jks
+*.log

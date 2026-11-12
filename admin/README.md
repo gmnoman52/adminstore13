@@ -10,11 +10,13 @@ npm ci
 npm run dev -- --host 127.0.0.1 --port 5173
 ```
 
-Open http://127.0.0.1:5173. For a production build, run `npm run build`; deploy the `dist` directory to your chosen HTTPS host with the two VITE_SUPABASE environment variables set during the build. No service-role key belongs in this website.
+Open http://127.0.0.1:5173. For a preview with production security controls, run `npm run build` then `npm run preview`. Deploy only `dist`, with the two VITE_SUPABASE public environment variables set during the build. `vercel.json` and the generated `_headers` provide hosting headers. Never put a service-role key in this website.
 
 ## Owner setup
 
 The admin website asks only for a passcode. There is no email field, public admin signup or email reset flow. Customer authentication in the mobile app is unchanged.
+
+Owner tokens use tab-scoped session storage. Existing persistent owner tokens are removed during upgrade, so the owner needs to log in again. The UI signs out after 30 minutes without activity; the database independently expires owner privileges after eight hours and rejects revoked sessions immediately. The passcode itself is not changed.
 
 1. Enter a passcode of at least 12 characters into the private local file C:/Users/faisa/.codex/secrets/united-super-store-owner-passcode.txt. It is outside the repository and dev-server roots.
 2. Run node ../scripts/hash-owner-passcode.mjs from this directory to prepare a bcrypt hash locally. The helper never prints the plaintext.
@@ -36,10 +38,18 @@ Customer confirmation and password-reset email callback setup remains described 
 - Store name, address, phone, optional public contact email, fulfilment options, delivery fee, minimum order and accepting-orders switch. Saved contact details become clickable footer links in both apps.
 - Optimistic concurrency prevents stale product forms from overwriting newer inventory updates.
 
-Store ordering starts disabled. No product, category, price, order, customer or delivery fee was seeded. The store settings row contains only its known name and unconfigured/disabled settings.
+Store ordering remains disabled. No demo product, category, price, order, customer or delivery fee was seeded. Real business contact details are configured; fulfilment fees/options still need confirmation before ordering is enabled.
 
 ## Validation
 
-`npm run build` and `npm run lint` validate this website. See ../mobile/VALIDATION.md for cross-app runtime and backend checks. Backend migrations, in order: catalogue.sql, auth_admin_orders.sql, order_hardening.sql, admin_privileges.sql, product_concurrency.sql, checkout_total.sql, store_contact_email.sql. `security-check.sql` verifies permissions, prices, inventory and order invariants in a rolled-back transaction.
+`npm run build` and `npm run lint` validate this website. See ../mobile/VALIDATION.md for cross-app runtime and backend checks. Apply files in `../supabase/migrations` in timestamp order for a new database. Existing hosted migrations are already applied. `../supabase/security-check.sql` verifies permissions, session revocation, quotas, prices, inventory and order invariants in a rolled-back transaction.
 
 On production hosting, keep the supplied `404.html` as the unknown-path fallback. The admin pages use hash routes under `/`.
+
+See `../SECURITY_AUDIT.md` before public deployment. The Supabase plugin does not expose hosted Auth configuration updates, so outstanding password/rate-limit settings require the owner to review those controls separately.
+
+The Messages page reads authenticated customer inquiries, allows the owner to mark them read and opens an email reply in the owner’s mail app. Replies include business details and a promotional-email opt-out instruction; no automatic email is sent. Ahmad's supplied international WhatsApp number is configured in store settings. Contact authorization and throttling are covered by `../supabase/contact-check.sql`.
+
+The Privacy page tracks account/data deletion, access, correction and promotional-email opt-out requests. Status changes do not delete accounts or unsubscribe external lists; the owner must fulfil or explain each request securely before closing it. Customer identity fields are immutable from the panel. New/changed photos require ownership/commercial-permission acknowledgement and use the store's own product-image bucket. See `../PRIVACY_AUDIT.md`, `../ASSET_PROVENANCE.md` and `../supabase/privacy-check.sql`.
+
+The photographed catalogue now contains 140 imported entries plus the preserved Banana product. Bundled, labelled AI illustrations provide images until the owner uploads real photos. Product editors show source review notes, an optional product code, **Price confirmed** and **Stock confirmed** controls. Six candidate prices and all imported stock quantities remain unconfirmed; those products cannot be ordered until the owner confirms the actual values. See `../catalogue/README.md` and `../supabase/catalogue-check.sql`.

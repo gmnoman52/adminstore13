@@ -32,7 +32,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       if (Platform.OS === 'web') return;
       if (!query.has('code') && !fragment.has('access_token')) return;
       await completeAuthFromUrl(url);
-      if (mounted && fragment.get('type') === 'recovery') setRecovery(true);
+      if (mounted && (query.get('type') || fragment.get('type')) === 'recovery') setRecovery(true);
     };
     const reportError = (error: unknown) => { if (mounted) setAuthError(error instanceof Error ? error.message : 'Couldn’t complete sign-in. Please try again'); };
     void Linking.getInitialURL().then(link).catch(reportError);

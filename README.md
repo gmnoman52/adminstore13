@@ -1,14 +1,31 @@
 # United Super Store
 
-Native Android implementation: [mobile/README.md](mobile/README.md). The files at the root remain the approved browser-based design reference.
+Android-first customer app for Ahmad's store, with a separate owner administration website and Supabase backend.
 
-Separate owner administration website: [admin/README.md](admin/README.md). Customer authentication and checkout are in the mobile app; administration is only in the separate website.
+- [Customer app setup](mobile/README.md)
+- [Separate admin setup](admin/README.md)
+- [Security audit and remaining launch requirements](SECURITY_AUDIT.md)
+- [Responsive usability checks](design/USABILITY_CHECK.md)
 
-Android-first UI/UX preview for Ahmad's neighbourhood super store. Includes delivery/pickup selection, home, catalogue search, cart, orders, and guest account screens.
+For a local preview with production security headers and no development debugger:
 
-Open index.html directly, or serve this directory with `python -m http.server 4173` and visit http://localhost:4173.
+```powershell
+cd mobile
+npm ci
+# Configure the public variables from .env.example in your ignored .env file.
+npm run build:web
+npm run preview:web
+```
 
-This is a browser-based design prototype, not an Android APK. Supabase, sign-in, products, payments and order submission are not connected. No dummy products, prices, categories, offers or orders are included. Mode selection is held only for the current page session.
+In another terminal, run `npm ci`, `npm run build`, then `npm run preview` inside `admin`. Customer preview: http://localhost:8081; admin preview: http://127.0.0.1:5173. Both preview servers bind only to the local computer.
+
+The browser uses publishable Supabase and public Firebase configuration. Private service keys, database passwords and OAuth client secrets must stay outside frontend code and public environment variables. Builds validate configuration and scan the output before serving it.
+
+Database access is enforced by permissions, live-session checks and row-level security. A customer can read their own orders; owner membership is stored in a private database table. The admin passcode is checked by Supabase Auth.
+
+Database migrations are in `supabase/migrations`, ordered by their actual hosted migration versions. `supabase/security-check.sql` verifies permissions and order invariants in a transaction that rolls back every fixture. Owner provisioning remains a separate server-only operation.
+
+The root `index.html` is the original design reference and can be opened directly as a local file. Do not serve the repository directory as a website: serve only an app's checked `dist` build.
 
 Approved identity: assets/brand/united-super-store-logo.png. Palette: design/colors.json; matching web tokens: design/tokens.css. Screens use a 4px spacing grid, 44px minimum touch targets, visible keyboard focus, and reduced-motion support.
 

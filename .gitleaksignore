@@ -1,0 +1,4 @@
+# Reviewed public Firebase web identifier, not a private server credential.
+# Exact historical fingerprints only; new credentials remain detectable.
+ba11b0f5c781d40cda94ef20dc6ee31a251f1cba:mobile/src/lib/firebase.web.ts:gcp-api-key:6
+a7083e34685787d246b4bf26fbe4a00835fc5a8b:mobile/src/lib/firebase.web.ts:gcp-api-key:6

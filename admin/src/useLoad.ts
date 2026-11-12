@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { errorText } from './api';
 export function useLoad<T>(load: () => Promise<T>) {
   const [data, setData] = useState<T>();
@@ -11,5 +11,6 @@ export function useLoad<T>(load: () => Promise<T>) {
     load().then(value => { if (active) setData(value); }).catch(error => { if (active) { setData(undefined); setError(errorText(error)); } }).finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [load, revision]);
-  return { data, error, loading, refresh: () => setRevision(value => value + 1) };
+  const refresh = useCallback(() => setRevision(value => value + 1), []);
+  return { data, error, loading, refresh };
 }

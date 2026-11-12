@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "node ../scripts/check-env.mjs admin && tsc -b && vite build && node ../scripts/check-build.mjs admin",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "node ../scripts/serve-built.mjs admin",
+    "predev": "node ../scripts/check-env.mjs admin",
+    "typecheck": "tsc -b"
   },
   "dependencies": {
     "react": "^19.3.1",

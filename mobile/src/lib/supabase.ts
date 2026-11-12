@@ -4,6 +4,8 @@ import { createClient } from '@supabase/supabase-js';
 
 const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const key = process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+if (key && !key.startsWith('sb_publishable_')) throw new Error('Customer apps require a Supabase publishable key');
+if (url && (new URL(url).protocol !== 'https:' || new URL(url).username || new URL(url).password)) throw new Error('Use an HTTPS Supabase project URL');
 export const supabase = url && key ? createClient(url, key, {
   auth: { flowType: 'pkce', storage: Platform.OS === 'web' ? undefined : { getItem: SecureStore.getItemAsync, setItem: SecureStore.setItemAsync, removeItem: SecureStore.deleteItemAsync }, persistSession: true, autoRefreshToken: true, detectSessionInUrl: Platform.OS === 'web' },
 }) : null;

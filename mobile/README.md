@@ -12,13 +12,13 @@ npm run android
 
 For the web development preview use `npm run web`. No service-role key is included. Native sessions are stored with Expo SecureStore; the web preview uses Supabase's browser session storage. Passwords are cleared after successful authentication and are not saved by the app.
 
-The web build uses static HTML for page titles and descriptions before JavaScript loads. Run `npx expo export --platform web` and deploy `dist`. Serve `/browse`, `/cart`, `/orders` and `/account` from their matching `.html` files, and use the supplied `404.html` for unknown paths. Keep asset paths intact. Customer data still loads securely from Supabase in the browser; the generated HTML contains no private account or order data.
+The web build uses static HTML for page titles and descriptions before JavaScript loads. Run `npm run build:web` and deploy only `dist`. This command validates public environment variables, checks output for exposed files/private credentials, and generates security headers. `npm run preview:web` serves the checked build locally with those headers and no development debugger. Serve `/browse`, `/cart`, `/orders` and `/account` from their matching `.html` files, and use `404.html` for unknown paths. Keep asset paths intact. The generated HTML contains no private account or order data.
 
 ## Customer features
 
 - Email/password signup, email confirmation feedback, login, persistent session restoration and logout.
 - Continue with Google on login and signup; provider activation steps are in GOOGLE_SIGN_IN.md.
-- Password reset and recovery; see the email callback configuration below.
+- Password reset and recovery with PKCE; implicit bearer-token deep links are rejected. New passwords require 12 characters and at most 72 UTF-8 bytes in the UI; the hosted password policy must also be reviewed as described in the security audit.
 - Live products and active categories, search, loading/empty/error/retry states, pull-to-refresh.
 - Cart quantities, delivery or pickup, checkout details, configured fees and minimum order, cash payment.
 - Server-calculated order totals, price-change checks, atomic stock reservation, duplicate-submit protection.
@@ -36,7 +36,7 @@ Configure Supabase Authentication Redirect URLs for the actual app and admin ori
 ```powershell
 npm run typecheck
 npm run lint
-npx expo export --platform android
+npm run build:android
 ```
 
 The EAS preview profile produces an Android APK after Expo account sign-in and project linking:
@@ -45,8 +45,8 @@ The EAS preview profile produces an Android APK after Expo account sign-in and p
 npx eas-cli@latest build --platform android --profile preview
 ```
 
-Set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY in the selected EAS environment too. No cloud build was submitted, APK generated, or store release published. Package name: com.unitedsuperstore.app.
+Set the public variables listed in `.env.example` in the selected EAS environment too. Firebase values are public web configuration, not OAuth client secrets. No cloud build was submitted, APK generated, or store release published. Package name: com.unitedsuperstore.app.
 
-Known toolchain findings: Expo's CLI/fingerprint dependencies currently have moderate glob/minimatch audit advisories; npm's automatic proposal downgrades Expo across major versions and was not applied. See audit.json. Review the toolchain before release.
+The security hardening pass patched the glob/minimatch toolchain advisories with reviewed overrides; both application audits currently report zero vulnerabilities. Expo SDK 58 and its matching React Native/React versions are retained. See `../SECURITY_AUDIT.md` for evidence, rate-limit scope and remaining hosted Auth settings.
 
 Palette: src/colors.json mirrors ../design/colors.json. Logo: assets/logo.png. See VALIDATION.md for check results.

@@ -7,7 +7,7 @@
   --selected-surface: #EAF3EC;
   --text-primary: #19221C;
   --text-secondary: #505C53;
-  --text-muted: #667169;
+  --text-muted: #646F67;
   --divider: #DFE4DF;
   --control-border: #7D897F;
   --focus: #075525;
@@ -15,6 +15,6 @@
   --warning: #854D0E;
   --error: #B42318;
   --disabled-surface: #E5E9E5;
-  --disabled-text: #667169;
+  --disabled-text: #646F67;
   --font-body: 'Segoe UI', Roboto, Arial, sans-serif;
 }
